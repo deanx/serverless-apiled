@@ -1,0 +1,22 @@
+{
+    "disabled": false,
+    "bindings": [
+        {
+            "type": "httpTrigger",
+            "direction": "in",
+            "name": "req",
+            "route": "client/{id}",
+            "authLevel": "anonymous",
+            "methods": [
+                "get"
+            ]
+        },
+        {
+            "type": "http",
+            "direction": "out",
+            "name": "res"
+        }
+    ],
+    "entryPoint": "status",
+    "scriptFile": "client.js"
+}

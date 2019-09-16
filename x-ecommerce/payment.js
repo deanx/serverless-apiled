@@ -5,9 +5,9 @@ module.exports.handler = async function(context, req) {
 
   const clientId = req.body.clientId;
   const paymentMethod = req.body.paymentMethod;
-
+  let res = {};
   if(paymentMethod !== "paypal") {
-    let res = { 
+    context.res = { 
       status: 400,
       body: "Invalid payment method"
     }
@@ -15,22 +15,30 @@ module.exports.handler = async function(context, req) {
 
   else {
     const paymentResponse = await processPayment(clientId);
-    let res = {
+    context.res = {
       status: 200,
       body: {
         status: paymentResponse.status,
         value: paymentResponse.value,
         currency: paymentResponse.currency
-      }
+      },
+      headers: { 'Content-Type': 'application/json' }
     }
+  
   }
-  context.done(null, res);
+  
 };
 
 async function processPayment(clientId) {
-  const paymentAPIURL = ${process.env['p-paymentURL']};
+  const paymentAPIURL = process.env['p-paymentURL'];
   try {
-    const paymentResponse = await fetch(paymentAPIURL, { method: 'POST', body: { clientId: clientId}});
+    const paymentResponse = await fetch(paymentAPIURL, 
+      { 
+        method: 'POST', 
+        body: JSON.stringify({clientId: clientId}),
+        headers: { 'Content-Type': 'application/json' }
+      }
+      );
     const jsonResponse = await paymentResponse.json();
     return jsonResponse;
   } catch(err) {

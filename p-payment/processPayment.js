@@ -37,7 +37,7 @@ async function processPayment(clientStatus) {
     paymentResponse = {
         status: "PROBLEM",
         date: new Date().toISOString(),
-        value: 1300.00,
+        value: -400.00,
         currency: "USD"
     };
   } else {

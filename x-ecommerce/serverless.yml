@@ -15,7 +15,7 @@ package:
     - .vscode/**
 
 functions:
-  payent:
+  payment:
     handler: payment.handler
     events:
       - http: true

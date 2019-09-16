@@ -3,8 +3,9 @@ service: p-payment
 provider:
   name: azure
   location: North Europe
-  s-salesforceURL: https://s-salesforce.azurewebsites.net/api/client/
-  s-paypalURL: https://s-paypal.azurewebsites.net/api/payment/paypal
+  environment:
+    s-salesforceURL: https://s-salesforce.azurewebsites.net/api/client/
+    s-paypalURL: https://s-paypal.azurewebsites.net/api/payment/paypal
 plugins:
   - serverless-azure-functions
 

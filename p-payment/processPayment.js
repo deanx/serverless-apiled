@@ -6,12 +6,12 @@ module.exports.handler = async function(context, req) {
   if (req.body && req.body.clientId) {
     const clientId = req.body.clientId;
     
-    const clientStatus = await getClientData(clientId);
-    const paymentResponse = await processPayment();
+    const clientStatus = await getClientData(clientId); 
+    const paymentResponse = await processPayment(clientStatus);
 
     context.res = {
       status: 200,
-      body: {}
+      body: paymentResponse
     };
   } else {
     context.res = {
@@ -22,23 +22,33 @@ module.exports.handler = async function(context, req) {
 };
 
 async function getClientData(clientId) {
-    const salesforceURL = `process.env['s-salesforceURL']/${clientId}`;
+    const salesforceURL = `${process.env['s-salesforceURL']}/${clientId}`;
     try {
-      const salesforceResponse = await fetch(salesForceURL);
+      const salesforceResponse = await fetch(salesforceURL);
       const clientStatus = salesforceResponse.json();
+      return clientStatus;
     } catch(err) {
       throw err;
     }
-    return clientStatus;
 }
 
-async function processPayment() {
-  try {
-    const paypalURL = process.env['s-paypalURL'];
-    const paypalResponse = await fetch(paypalURL);
-    const paymentResponse = paypalResponse.json();
-  } catch(err) {
-    throw err;
+async function processPayment(clientStatus) {
+  if(clientStatus.situation != "green") {
+    paymentResponse = {
+        status: "PROBLEM",
+        date: new Date().toISOString(),
+        value: 1300.00,
+        currency: "USD"
+    };
+  } else {
+      try {
+      const paypalURL = process.env['s-paypalURL'];
+      const paypalResponse = await fetch(paypalURL, { method: 'POST'});
+      const paymentResponse = paypalResponse.json();
+      return paymentResponse;
+    } catch(err) {
+      throw err;
+    }
   }
   return paymentResponse;
 }
